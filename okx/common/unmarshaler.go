@@ -319,6 +319,8 @@ func (un *RespUnmarshaler) UnmarshalGetPositionsResponse(data []byte) ([]Futures
 				}
 				if valStr == "short" {
 					pos.PosSide = Futures_OpenSell
+				} else {
+					pos.PosSide = OrderSide(valStr)
 				}
 			case "upl":
 				pos.Upl = cast.ToFloat64(valStr)
