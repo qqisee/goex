@@ -34,6 +34,7 @@ func WithClientId(clientId string) ApiOption {
 	}
 }
 func WithTestNet(testNet bool) ApiOption {
+	//添加okx测试网选项
 	return func(options *ApiOptions) {
 		options.TestNet = testNet
 	}
