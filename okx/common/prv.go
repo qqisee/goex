@@ -177,6 +177,9 @@ func (prv *Prv) DoAuthRequest(httpMethod, reqUrl string, params *url.Values, hea
 		"OK-ACCESS-PASSPHRASE": prv.apiOpts.Passphrase,
 		"OK-ACCESS-SIGN":       signStr,
 		"OK-ACCESS-TIMESTAMP":  timestamp}
+	if prv.apiOpts.TestNet {
+		headers["x-simulated-trading"] = "1"
+	}
 
 	respBody, err := httpcli.Cli.DoRequest(httpMethod, reqUrl, reqBodyStr, headers)
 	if err != nil {
