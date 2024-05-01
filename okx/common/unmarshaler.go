@@ -386,14 +386,21 @@ func (un *RespUnmarshaler) UnmarshalGetExchangeInfoResponse(data []byte) (map[st
 		})
 
 		if instTy == "SWAP" {
-			currencyPair.BaseSymbol = ctValCcy
-			currencyPair.QuoteSymbol = settleCcy
-		}
-
-		//adapt
-		if instTy == "FUTURES" {
-			currencyPair.BaseSymbol = settleCcy
-			currencyPair.QuoteSymbol = ctValCcy
+			if settleCcy == USDT {
+				currencyPair.BaseSymbol = ctValCcy
+				currencyPair.QuoteSymbol = USDT
+			} else {
+				currencyPair.BaseSymbol = settleCcy
+				currencyPair.QuoteSymbol = ctValCcy
+			}
+		} else if instTy == "FUTURES" {
+			if settleCcy == USDT {
+				currencyPair.BaseSymbol = ctValCcy
+				currencyPair.QuoteSymbol = USDT
+			} else {
+				currencyPair.BaseSymbol = settleCcy
+				currencyPair.QuoteSymbol = ctValCcy
+			}
 		}
 
 		k := fmt.Sprintf("%s%s%s", currencyPair.BaseSymbol, currencyPair.QuoteSymbol, currencyPair.ContractAlias)
@@ -401,6 +408,23 @@ func (un *RespUnmarshaler) UnmarshalGetExchangeInfoResponse(data []byte) (map[st
 	})
 
 	return currencyPairMap, err
+}
+
+func (un *RespUnmarshaler) UnmarshalGetFundingRateResponse(data []byte) (*FundingRate, error) {
+	var rate FundingRate
+	err := jsonparser.ObjectEach(data[1:len(data)-1], func(key []byte, value []byte, dataType jsonparser.ValueType, offset int) error {
+		switch string(key) {
+		case "fundingRate":
+			rate.Rate = cast.ToFloat64(string(value))
+		case "fundingTime":
+			rate.Tm = cast.ToInt64(string(value))
+		}
+		return nil
+	})
+	if err != nil {
+		return nil, err
+	}
+	return &rate, nil
 }
 
 func (un *RespUnmarshaler) UnmarshalResponse(data []byte, res interface{}) error {

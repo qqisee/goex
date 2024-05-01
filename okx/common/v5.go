@@ -16,6 +16,13 @@ type BaseResp struct {
 	Data json.RawMessage `json:"data"`
 }
 
+type ErrorResponseData struct {
+	OrdID   string `json:"ordId"`
+	ClOrdId string `json:"clOrdId"`
+	SCode   string `json:"sCode"`
+	SMsg    string `json:"sMsg"`
+}
+
 func New() *OKxV5 {
 	unmarshaler := new(RespUnmarshaler)
 
@@ -33,6 +40,7 @@ func New() *OKxV5 {
 			GetAccountUri:       "/api/v5/account/balance",
 			GetPositionsUri:     "/api/v5/account/positions",
 			GetExchangeInfoUri:  "/api/v5/public/instruments",
+			GetFundingRateUri:   "/api/v5/public/funding-rate",
 		},
 		UnmarshalOpts: UnmarshalerOptions{
 			ResponseUnmarshaler:                  unmarshaler.UnmarshalResponse,
@@ -48,6 +56,7 @@ func New() *OKxV5 {
 			GetPositionsResponseUnmarshaler:      unmarshaler.UnmarshalGetPositionsResponse,
 			GetFuturesAccountResponseUnmarshaler: unmarshaler.UnmarshalGetFuturesAccountResponse,
 			GetExchangeInfoResponseUnmarshaler:   unmarshaler.UnmarshalGetExchangeInfoResponse,
+			GetFundingRateResponseUnmarshaler:    unmarshaler.UnmarshalGetFundingRateResponse,
 		},
 	}
 
